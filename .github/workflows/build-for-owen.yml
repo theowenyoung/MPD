@@ -69,28 +69,28 @@ jobs:
             libgcrypt20-dev
 
 
-      - name: Mini Build
+      - name: Full Build
         uses: BSFishy/meson-build@v1.0.3
         with:
           action: build
-          directory: output/mini
-          setup-options: -Dbuildtype=minsize -Dauto_features=disabled -Dtest=true -Ddaemon=false -Dinotify=false -Depoll=false -Deventfd=false -Dsignalfd=false -Dtcp=false -Ddsd=false -Ddatabase=false -Dneighbor=false -Dcue=false -Dfifo=false -Dhttpd=false -Dpipe=false -Drecorder=false -Dsnapcast=false
+          directory: output/full
+          setup-options: -Ddocumentation=disabled -Dtest=true -Dsystemd=enabled -Dpcre=enabled
           options: --verbose
           meson-version: 0.56.0
-      - run: ls -l -a ./output/mini
+      - run: ls -l -a ./output/full
       - name: Archive Release
         uses: thedoctor0/zip-release@main
         with:
           type: '${{matrix.archive_type}}'
           filename: '${{ steps.get_repository_name.outputs.REPOSITORY_NAME }}-${{ matrix.target }}${{matrix.suffix}}'
-          path: "./mini"
-          directory: "./output"
+          path: "./mpd"
+          directory: "./output/full"
       - uses: ncipollo/release-action@v1
         with:
-          artifacts: "./output/${{ steps.get_repository_name.outputs.REPOSITORY_NAME }}-${{ matrix.target }}${{matrix.suffix}}"
+          artifacts: "./output/full/${{ steps.get_repository_name.outputs.REPOSITORY_NAME }}-${{ matrix.target }}${{matrix.suffix}}"
           token: ${{ secrets.GITHUB_TOKEN }}
           allowUpdates: true
       - uses: actions/upload-artifact@master
         with:
           name: ${{ steps.get_repository_name.outputs.REPOSITORY_NAME }}-${{ matrix.target }}
-          path: ./output/${{ steps.get_repository_name.outputs.REPOSITORY_NAME }}-${{matrix.target}}${{matrix.suffix}}
+          path: ./output/full/${{ steps.get_repository_name.outputs.REPOSITORY_NAME }}-${{matrix.target}}${{matrix.suffix}}
