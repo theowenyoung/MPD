@@ -2,29 +2,8 @@
 on:
   workflow_dispatch:
   push:
-    paths-ignore:
-      - 'android/**'
-      - 'build/**'
-      - 'doc/**'
-      - 'python/**'
-      - 'subprojects/**'
-      - 'systemd/**'
-      - 'win32/**'
-    branches:
-      - master
-      - v0.23.x
-  pull_request:
-    paths-ignore:
-      - 'android/**'
-      - 'build/**'
-      - 'doc/**'
-      - 'python/**'
-      - 'subprojects/**'
-      - 'systemd/**'
-      - 'win32/**'
-    branches:
-      - master
-      - v0.23.x
+    tags:
+    - '*'
 
 jobs:
   build-linux:
