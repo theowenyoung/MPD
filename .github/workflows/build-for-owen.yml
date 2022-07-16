@@ -83,14 +83,14 @@ jobs:
         with:
           type: '${{matrix.archive_type}}'
           filename: '${{ steps.get_repository_name.outputs.REPOSITORY_NAME }}-${{ matrix.target }}${{matrix.suffix}}'
-          path: "./mpd"
-          directory: "./output/mini"
+          path: "./mini"
+          directory: "./output"
       - uses: ncipollo/release-action@v1
         with:
-          artifacts: "./output/mini/${{ steps.get_repository_name.outputs.REPOSITORY_NAME }}-${{ matrix.target }}${{matrix.suffix}}"
+          artifacts: "./output/${{ steps.get_repository_name.outputs.REPOSITORY_NAME }}-${{ matrix.target }}${{matrix.suffix}}"
           token: ${{ secrets.GITHUB_TOKEN }}
           allowUpdates: true
       - uses: actions/upload-artifact@master
         with:
           name: ${{ steps.get_repository_name.outputs.REPOSITORY_NAME }}-${{ matrix.target }}
-          path: ./output/mini/${{ steps.get_repository_name.outputs.REPOSITORY_NAME }}-${{matrix.target}}${{matrix.suffix}}
+          path: ./output/${{ steps.get_repository_name.outputs.REPOSITORY_NAME }}-${{matrix.target}}${{matrix.suffix}}
