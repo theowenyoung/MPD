@@ -30,11 +30,13 @@ jobs:
   build-linux:
     strategy:
       matrix:
-        os: [ubuntu-22.04]
         include:
           - os: ubuntu-22.04
             cc: gcc-11
             cxx: g++-11
+            target: x86_64-unknown-linux-gnu
+            archive_type: tar
+            suffix: '.tar.gz'
 
     runs-on: ${{ matrix.os }}
 
@@ -43,6 +45,9 @@ jobs:
       CXX: ccache ${{ matrix.cxx }}
 
     steps:
+      - id: get_repository_name
+        run: echo ::set-output name=REPOSITORY_NAME::$(echo "$GITHUB_REPOSITORY" | awk -F / '{print $2}' | sed -e "s/:refs//")
+        shell: bash
       - id: checkout
         uses: actions/checkout@v3
       - id: cache-ccache
@@ -94,3 +99,19 @@ jobs:
           options: --verbose
           meson-version: 0.56.0
       - run: ls -l -a ./output/mini
+      - name: Archive Release
+        uses: thedoctor0/zip-release@main
+        with:
+          type: '${{matrix.archive_type}}'
+          filename: '${{ steps.get_repository_name.outputs.REPOSITORY_NAME }}-${{ matrix.target }}${{matrix.suffix}}'
+          path: "./mpd"
+          directory: "./output/mini"
+      - uses: ncipollo/release-action@v1
+        with:
+          artifacts: "./output/mini/${{ steps.get_repository_name.outputs.REPOSITORY_NAME }}-${{ matrix.target }}${{matrix.suffix}}"
+          token: ${{ secrets.GITHUB_TOKEN }}
+          allowUpdates: true
+      - uses: actions/upload-artifact@master
+        with:
+          name: ${{ steps.get_repository_name.outputs.REPOSITORY_NAME }}-${{ matrix.target }}
+          path: ./output/mini/${{ steps.get_repository_name.outputs.REPOSITORY_NAME }}-${{matrix.target}}${{matrix.suffix}}
